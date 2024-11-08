@@ -1,20 +1,34 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:organizeIT.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="organizeIT.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="organizeIT">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:organizeIT.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="organizeIT.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+    Icon="/Assets/avalonia-logo.ico"
+    Title="organizeIT">
 
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
-    </Design.DataContext>
+    <Grid RowDefinitions="Auto,*" Margin="10">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+            <Button Content="Neuer Termin" Command="{Binding AddAppointmentCommand}" />
+            <Button Content="Termin löschen"
+                Command="{Binding DeleteAppointmentCommand}"
+                IsEnabled="{Binding SelectedAppointment, Converter={x:Static ObjectConverters.IsNotNull}}" />
+        </StackPanel>
 
-    <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
+        <DataGrid Grid.Row="1"
+            ItemsSource="{Binding Appointments}"
+            SelectedItem="{Binding SelectedAppointment}"
+            AutoGenerateColumns="False"
+            IsReadOnly="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Titel" Binding="{Binding Title}" />
+                <DataGridTextColumn Header="Beschreibung" Binding="{Binding Description}" />
+                <DataGridTextColumn Header="Beginn" Binding="{Binding StartTime}" />
+                <DataGridTextColumn Header="Ende" Binding="{Binding EndTime}" />
+                <DataGridTextColumn Header="Ort" Binding="{Binding Location}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
 </Window>
