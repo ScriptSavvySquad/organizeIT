@@ -2,6 +2,7 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using organizeIT.Models;
+using Avalonia.Media;
 
 namespace organizeIT.ViewModels;
 
@@ -28,17 +29,39 @@ public partial class AppointmentDialogViewModel : ViewModelBase
     [ObservableProperty]
     private string location = string.Empty;
 
+    [ObservableProperty]
+    private bool showValidationErrors;
+
+    [ObservableProperty]
+    private bool canSave = true;
+
+    partial void OnTitleChanged(string value)
+    {
+        CanSave = !string.IsNullOrWhiteSpace(value);
+    }
+
+    public Brush TitleError => ShowValidationErrors && string.IsNullOrWhiteSpace(Title) 
+        ? new SolidColorBrush(Colors.Red) 
+        : new SolidColorBrush(Colors.Gray);
+
     public Action<Appointment?> OnClose { get; set; } = _ => { };
 
     [RelayCommand]
     private void Save()
     {
-        DateTime startDateTime = startDate.Date + startTime;
-        DateTime endDateTime = endDate.Date + endTime;
+        ShowValidationErrors = true;
+        
+        if (string.IsNullOrWhiteSpace(Title))
+        {
+            return;
+        }
+
+        DateTime startDateTime = StartDate.Date + StartTime;
+        DateTime endDateTime = EndDate.Date + EndTime;
 
         if (endDateTime <= startDateTime)
         {
-            // In einer vollständigen Implementierung sollten wir hier eine Fehlermeldung anzeigen
+            // TODO: Fehlermeldung anzeigen
             return;
         }
 
